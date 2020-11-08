@@ -5,7 +5,7 @@
   inputs.nixpkgs.url = "github:Mic92/nixpkgs/bme680";
 
   outputs = { self, nixpkgs, utils }:
-    (utils.lib.eachSystem utils.lib.allSystems (system:
+    (utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
       in rec {
