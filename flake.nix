@@ -2,7 +2,7 @@
   description = "Publish BME680 sensor data to home-assistant via MQTT";
 
   inputs.utils.url = "github:numtide/flake-utils";
-  inputs.nixpkgs.url = "github:Mic92/nixpkgs/bme680";
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/master";
 
   outputs = { self, nixpkgs, utils }:
     (utils.lib.eachDefaultSystem (system:

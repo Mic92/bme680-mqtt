@@ -1,4 +1,4 @@
-{ pkgs ? import (fetchTarball "https://github.com/Mic92/nixpkgs/archive/bme680.tar.gz") {}
+{ pkgs ? import (fetchTarball "https://github.com/NixOS/nixpkgs/archive/master.tar.gz") {}
 , python3 ? pkgs.python3
 , mypy ? pkgs.mypy
 , glibcLocales ? pkgs.glibcLocales
