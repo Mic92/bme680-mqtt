@@ -58,6 +58,7 @@ class Options:
     name: str
     topic_prefix: str
     url: str
+    password_file: Optional[str]
     i2c_address: int
     i2c_bus: int
 
@@ -235,7 +236,7 @@ def _setup_bme680(options: Options) -> Optional[BME680Handler]:
     return sensor_handler
 
 
-def _setup_mqtt(url: str) -> mqtt.Client:
+def _setup_mqtt(url: str, passwort_file: Optional[str]) -> mqtt.Client:
     client_id = mqtt.base62(uuid.uuid4().int, padding=22)
     mqttc = mqtt.Client(client_id)
     mqttc.enable_logger(_LOGGER)
@@ -244,6 +245,9 @@ def _setup_mqtt(url: str) -> mqtt.Client:
     if parsed.scheme == "mqtts":
         mqttc.tls_set()
     port = parsed.port or 1883
+    if passwort_file:
+        with open(passwort_file) as f:
+            parsed.password = f.read()
 
     if parsed.username:
         mqttc.username_pw_set(parsed.username, parsed.password)
@@ -308,6 +312,11 @@ def parse_args() -> Options:
         default=1,
         type=int,
     )
+    parser.add_argument(
+        "--password-file",
+        help="File to read password from (default: none)",
+        default=None,
+    )
     args = parser.parse_args()
     return Options(
         name=args.name,
@@ -315,6 +324,7 @@ def parse_args() -> Options:
         url=args.url,
         i2c_address=args.i2c_address,
         i2c_bus=args.i2c_bus,
+        password_file=args.password_file
     )
 
 
@@ -323,7 +333,7 @@ def main() -> None:
     sensor = _setup_bme680(options)
     if sensor is None:
         return
-    mqttc = _setup_mqtt(options.url)
+    mqttc = _setup_mqtt(options.url, options.password_file)
     for sensor_type in DEFAULT_MONITORED:
         publish_sensor(mqttc, SENSOR_TYPES[sensor_type], options)
 
