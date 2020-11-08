@@ -281,7 +281,7 @@ def publish_update(mqttc: mqtt.Client, sensor: BME680Handler, options: Options) 
         SENSOR_PRESS: round(data.pressure, 1),
         SENSOR_AQ: round(data.air_quality, 1) if data.air_quality else None,
     }
-    mqttc.publish("{options.topic_prefix}/state", json.dumps(state))
+    mqttc.publish(f"{options.topic_prefix}/state", json.dumps(state))
     _LOGGER.info(f"state: {state}")
 
 
