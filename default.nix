@@ -1,22 +1,30 @@
 { pkgs ? import (fetchTarball "https://github.com/Mic92/nixpkgs/archive/bme680.tar.gz") {}
-, pythonPackages ? pkgs.python3.pkgs
+, python3 ? pkgs.python3
+, mypy ? pkgs.mypy
+, glibcLocales ? pkgs.glibcLocales
+, buildPythonApplication ? python3.pkgs.buildPythonApplication
+, black ? python3.pkgs.black
+, flake8 ? python3.pkgs.flake8
+, bme680 ? python3.pkgs.bme680
+, smbus-cffi ? python3.pkgs.smbus-cffi
+, paho-mqtt ? python3.pkgs.paho-mqtt
+, src ? ./.
 }:
 
-pythonPackages.buildPythonApplication rec {
+buildPythonApplication rec {
   name = "bme680-mqtt";
-  src = ./.;
+  inherit src;
   propagatedBuildInputs = [
-    pythonPackages.bme680
-    pythonPackages.paho-mqtt
+    bme680
+    paho-mqtt
   ];
   checkInputs = [ 
-    pkgs.mypy 
-    pkgs.glibcLocales
-    pythonPackages.black 
-    pythonPackages.flake8 
+    mypy
+    glibcLocales
+    black
+    flake8
   ];
-  MYPYPATH = "${pythonPackages.bme680}/${pythonPackages.python.sitePackages}:" +
-    "${pythonPackages.smbus-cffi}/${pythonPackages.python.sitePackages}:";
+  MYPYPATH = "${bme680}/${python3.sitePackages}:${smbus-cffi}/${python3.sitePackages}";
   checkPhase = ''
     echo -e "\x1b[32m## run black\x1b[0m"
     LC_ALL=en_US.utf-8 black --check .
