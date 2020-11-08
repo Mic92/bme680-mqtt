@@ -14,7 +14,7 @@
         };
         defaultPackage = packages.bme680-mqtt;
       })) // {
-        nixosModules.bme680-mqtt = { config, lib, ... }: let
+        nixosModules.bme680-mqtt = { config, pkgs, lib, ... }: let
           cfg = config.services.bme680-mqtt;
         in {
           options = {
@@ -30,23 +30,23 @@
                 '';
               };
               i2c.address = lib.mkOption {
-                type = lib.types.int;
-                default = 1;
-                example = 4;
+                type = lib.types.str;
+                default = "0x76";
+                example = "0x77";
                 description = ''
                   I2C address where the bme680 is connected to.
                 '';
               };
               mqtt.name = lib.mkOption {
                 type = lib.types.str;
-                example = "bme680";
+                default = "bme680";
                 description = ''
                   Name used in home-assistant
                 '';
               };
               mqtt.topicPrefix = lib.mkOption {
                 type = lib.types.str;
-                example = "homeassistant/sensor/bme680";
+                default = "homeassistant/sensor/bme680";
                 description = ''
                   MQTT topic prefix
                 '';
@@ -71,29 +71,29 @@
           config = {
             systemd.services.bme680-mqtt = {
               serviceConfig = {
-                Type = "oneshot";
                 DynamicUser = true;
+                User = "bme680-mqtt";
                 SupplementaryGroups = [ "i2c" ];
-                PrivateTmp = true;
+                RuntimeDirectory = "bme680-mqtt";
                 PermissionsStartOnly = "true";
                 ExecStart = ''
-                  ${self.defaultPackage}/bin/bme680-mqtt  \
+                  ${self.defaultPackage.${pkgs.system}}/bin/bme680-mqtt  \
                     --name "${cfg.mqtt.name}" \
                     --topic-prefix "${cfg.mqtt.topicPrefix}" \
-                    --i2c-address "${cfg.i2c.address}" \
-                    --i2c-bus "${cfg.i2c.bus}" \
-                    ${lib.optionalString (cfg.mqtt.passwordFile != null) "--password-file /tmp/password"} \
+                    --i2c-address "${toString cfg.i2c.address}" \
+                    --i2c-bus "${toString cfg.i2c.bus}" \
+                    ${lib.optionalString (cfg.mqtt.passwordFile != null) "--password-file /run/bme680-mqtt/password"} \
                     ${cfg.mqtt.url}
                 '';
-              } // lib.optionalAttrs (cfg.mqtt.passwordFile != null) {
-                ExecStartPre = ''
-                  install -m444 ${cfg.mqtt.passwordFile} /tmp/password
-                '';
               };
+            } // lib.optionalAttrs (cfg.mqtt.passwordFile != null) {
+              preStart = ''
+                install -o bme680-mqtt -m400 ${cfg.mqtt.passwordFile} /run/bme680-mqtt/password
+              '';
             };
             users.groups.i2c = {};
             systemd.tmpfiles.rules = [
-              "c /dev/i2c-${cfg.i2c.bus} 0660 root i2c - 89:${cfg.i2c.bus}"
+              "c /dev/i2c-${toString cfg.i2c.bus} 0660 root i2c - 89:${toString cfg.i2c.bus}"
             ];
           };
         };
