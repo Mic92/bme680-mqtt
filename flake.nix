@@ -9,10 +9,8 @@
       let
         pkgs = nixpkgs.legacyPackages.${system};
       in rec {
-        packages = {
-          bme680-mqtt = pkgs.python3.pkgs.callPackage ./default.nix {
-            src = self;
-          };
+        packages.bme680-mqtt = pkgs.python3.pkgs.callPackage ./default.nix {
+          src = self;
         };
         defaultPackage = packages.bme680-mqtt;
       });
