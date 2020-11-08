@@ -47,3 +47,11 @@ Example: Remote broker with TLS and authentication
 ```console
 $ bme680-mqtt mqtts://username:password@mqtt.example.com:8886
 ```
+
+If mqtt discovery in home-assistant is activated it will automatically pick up the device from the topic `homeassistant/sensor/bme680` and it should
+publish the following sensors:
+
+- `sensor.bme680_air_quality`
+- `sensor.bme680_humidity`
+- `sensor.bme680_pressure`
+- `sensor.bme680_temperature`
