@@ -326,7 +326,7 @@ def parse_args() -> Options:
         url=args.url,
         i2c_address=int(args.i2c_address, 0),
         i2c_bus=args.i2c_bus,
-        password_file=args.password_file
+        password_file=args.password_file,
     )
 
 
