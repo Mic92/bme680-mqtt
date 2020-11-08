@@ -280,22 +280,22 @@ def publish_update(mqttc: mqtt.Client, sensor: BME680Handler, options: Options) 
 
 
 def parse_args() -> Options:
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description="publish bme680 sensor to home-assistant via mqtt")
     help = "mqtt broker to write to, format: [mqtt][s]://[username][:password]@host.domain[:port]"
     parser.add_argument("url", help=help, default="mqtt://localhost")
     parser.add_argument(
-        "--name", help="Name prefix used when publishing", default="BME680"
+        "--name", help="Name prefix used when publishing (default BME680)", default="BME680"
     )
     parser.add_argument(
         "--topic-prefix",
-        help="Topic prefix used when publishing",
+        help="Topic prefix used when publishing (default: homeassistant/sensor/bme680)",
         default="homeassistant/sensor/bme680",
     )
     parser.add_argument(
-        "--i2c-address", help="I2C address of the bme680 sensor", default=0x76, type=int
+            "--i2c-address", help="I2C address of the bme680 sensor (default: 0x76)", default=0x76, type=int
     )
     parser.add_argument(
-        "--i2c-bus", help="I2C bus of the bme680 sensor", default=1, type=int
+            "--i2c-bus", help="I2C bus of the bme680 sensor (default: 1)", default=1, type=int
     )
     args = parser.parse_args()
     return Options(
