@@ -245,12 +245,13 @@ def _setup_mqtt(url: str, passwort_file: Optional[str]) -> mqtt.Client:
     if parsed.scheme == "mqtts":
         mqttc.tls_set()
     port = parsed.port or 1883
+    password = parsed.password
     if passwort_file:
         with open(passwort_file) as f:
-            parsed.password = f.read()
+            password = f.read()
 
     if parsed.username:
-        mqttc.username_pw_set(parsed.username, parsed.password)
+        mqttc.username_pw_set(parsed.username, password)
     _LOGGER.info(f"connect to {parsed.hostname}:{parsed.port}")
     mqttc.connect(parsed.hostname, port=port, keepalive=60)
     mqttc.loop_start()
@@ -303,8 +304,8 @@ def parse_args() -> Options:
     parser.add_argument(
         "--i2c-address",
         help="I2C address of the bme680 sensor (default: 0x76)",
-        default=0x76,
-        type=int,
+        default="0x76",
+        type=str,
     )
     parser.add_argument(
         "--i2c-bus",
@@ -318,13 +319,14 @@ def parse_args() -> Options:
         default=None,
     )
     args = parser.parse_args()
+
     return Options(
         name=args.name,
         topic_prefix=args.topic_prefix,
         url=args.url,
-        i2c_address=args.i2c_address,
+        i2c_address=int(args.i2c_address, 0),
         i2c_bus=args.i2c_bus,
-        password_file=args.password_file
+        password_file=args.password_file,
     )
 
 
