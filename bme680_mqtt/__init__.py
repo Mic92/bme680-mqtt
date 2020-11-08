@@ -245,12 +245,13 @@ def _setup_mqtt(url: str, passwort_file: Optional[str]) -> mqtt.Client:
     if parsed.scheme == "mqtts":
         mqttc.tls_set()
     port = parsed.port or 1883
+    password = parsed.password
     if passwort_file:
         with open(passwort_file) as f:
-            parsed.password = f.read()
+            password = f.read()
 
     if parsed.username:
-        mqttc.username_pw_set(parsed.username, parsed.password)
+        mqttc.username_pw_set(parsed.username, password)
     _LOGGER.info(f"connect to {parsed.hostname}:{parsed.port}")
     mqttc.connect(parsed.hostname, port=port, keepalive=60)
     mqttc.loop_start()
