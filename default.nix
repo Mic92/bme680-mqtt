@@ -1,4 +1,4 @@
-{ pkgs ? import <nixpkgs> {}
+{ pkgs ? import (fetchTarball "https://github.com/Mic92/nixpkgs/archive/bme680.tar.gz") {}
 , pythonPackages ? pkgs.python3.pkgs
 }:
 
