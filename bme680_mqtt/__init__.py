@@ -15,7 +15,6 @@ import bme680  # pylint: disable=import-error
 from smbus import SMBus  # pylint: disable=import-error
 
 _LOGGER = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO)
 
 
 DEFAULT_OVERSAMPLING_TEMP = 8  # Temperature oversampling x 8
@@ -61,6 +60,7 @@ class Options:
     password_file: Optional[str]
     i2c_address: int
     i2c_bus: int
+    log_level: int
 
 
 class BME680Handler:
@@ -318,6 +318,13 @@ def parse_args() -> Options:
         help="File to read password from (default: none)",
         default=None,
     )
+    parser.add_argument(
+        "--quiet",
+        help="Don't print sensor state on stdout",
+        action="store_const",
+        const=True,
+        default=False,
+    )
     args = parser.parse_args()
 
     return Options(
@@ -327,11 +334,13 @@ def parse_args() -> Options:
         i2c_address=int(args.i2c_address, 0),
         i2c_bus=args.i2c_bus,
         password_file=args.password_file,
+        log_level=logging.WARN if args.quiet else logging.INFO,
     )
 
 
 def main() -> None:
     options = parse_args()
+    logging.basicConfig(level=options.log_level)
     sensor = _setup_bme680(options)
     if sensor is None:
         return

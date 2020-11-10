@@ -77,7 +77,7 @@
                 RuntimeDirectory = "bme680-mqtt";
                 PermissionsStartOnly = "true";
                 ExecStart = ''
-                  ${self.defaultPackage.${pkgs.system}}/bin/bme680-mqtt  \
+                  ${self.defaultPackage.${pkgs.system}}/bin/bme680-mqtt --quiet \
                     --name "${cfg.mqtt.name}" \
                     --topic-prefix "${cfg.mqtt.topicPrefix}" \
                     --i2c-address "${toString cfg.i2c.address}" \
