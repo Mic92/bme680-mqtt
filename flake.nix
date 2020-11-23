@@ -70,6 +70,7 @@
           };
           config = {
             systemd.services.bme680-mqtt = {
+              wantedBy = [ "multi-user.target" ];
               serviceConfig = {
                 DynamicUser = true;
                 User = "bme680-mqtt";
