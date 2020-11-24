@@ -77,6 +77,7 @@
                 SupplementaryGroups = [ "i2c" ];
                 RuntimeDirectory = "bme680-mqtt";
                 PermissionsStartOnly = "true";
+                Restart = "on-failure";
                 ExecStart = ''
                   ${self.defaultPackage.${pkgs.system}}/bin/bme680-mqtt --quiet \
                     --name "${cfg.mqtt.name}" \
