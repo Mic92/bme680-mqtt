@@ -24,7 +24,7 @@ buildPythonApplication rec {
     black
     flake8
   ];
-  MYPYPATH = "${bme680}/${python3.sitePackages}:${smbus-cffi}/${python3.sitePackages}";
+  MYPYPATH = "${smbus-cffi}/${python3.sitePackages}";
   checkPhase = ''
     echo -e "\x1b[32m## run black\x1b[0m"
     LC_ALL=en_US.utf-8 black --check .
