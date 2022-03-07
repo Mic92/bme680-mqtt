@@ -1,4 +1,4 @@
-{ pkgs ? import (fetchTarball "https://github.com/NixOS/nixpkgs/archive/master.tar.gz") {}
+{ pkgs ? import (fetchTarball "https://github.com/NixOS/nixpkgs/archive/nixpkgs-unstable.tar.gz") {}
 , python3 ? pkgs.python3
 , mypy ? pkgs.mypy
 , glibcLocales ? pkgs.glibcLocales
