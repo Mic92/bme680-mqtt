@@ -11,11 +11,23 @@
 , src ? ./.
 }:
 
-buildPythonApplication rec {
+let
+  smbus-cffi' = smbus-cffi.overrideAttrs (old: {
+    patches = old.patches ++ [
+      # https://github.com/bivab/smbus-cffi/pull/25
+      (pkgs.fetchpatch {
+        url = "https://github.com/bivab/smbus-cffi/commit/4a23b92803f0b93196d52aff7dbdc394184cb774.patch";
+        sha256 = "sha256-Sk51OlAB6c8ufP+TAvGroIVdwcqDo4dVdRPKweD6u24=";
+      })
+    ];
+  });
+in buildPythonApplication rec {
   name = "bme680-mqtt";
   inherit src;
   propagatedBuildInputs = [
-    bme680
+    (bme680.override {
+      smbus-cffi = smbus-cffi';
+    })
     paho-mqtt
   ];
   checkInputs = [ 
@@ -24,7 +36,6 @@ buildPythonApplication rec {
     black
     flake8
   ];
-  MYPYPATH = "${smbus-cffi}/${python3.sitePackages}";
   checkPhase = ''
     echo -e "\x1b[32m## run black\x1b[0m"
     LC_ALL=en_US.utf-8 black --check .
