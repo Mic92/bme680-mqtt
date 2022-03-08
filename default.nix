@@ -11,22 +11,24 @@
 , src ? ./.
 }:
 
-let
-  smbus-cffi' = smbus-cffi.overrideAttrs (old: {
-    patches = old.patches ++ [
-      # https://github.com/bivab/smbus-cffi/pull/25
-      (pkgs.fetchpatch {
-        url = "https://github.com/bivab/smbus-cffi/commit/4a23b92803f0b93196d52aff7dbdc394184cb774.patch";
-        sha256 = "sha256-Sk51OlAB6c8ufP+TAvGroIVdwcqDo4dVdRPKweD6u24=";
-      })
-    ];
-  });
-in buildPythonApplication rec {
+buildPythonApplication rec {
   name = "bme680-mqtt";
   inherit src;
   propagatedBuildInputs = [
     (bme680.override {
-      smbus-cffi = smbus-cffi';
+      smbus-cffi = smbus-cffi.overrideAttrs (old: {
+        # bug in fetchpatch?
+        preBuild = ''
+          touch smbus/py.typed
+        '';
+        patches = old.patches ++ [
+          # https://github.com/bivab/smbus-cffi/pull/25
+          (pkgs.fetchpatch {
+            url = "https://github.com/bivab/smbus-cffi/commit/9e72d80e4d8362c966dc65270f43a6ab9e703578.patch";
+            sha256 = "sha256-Tsq+6PIw/3o/GXo73Nza7USws6UAeG2u4slRB0KQR6U=";
+          })
+        ];
+      });
     })
     paho-mqtt
   ];
