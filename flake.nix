@@ -15,11 +15,11 @@
         packages.bme680-mqtt = pkgs.python3.pkgs.callPackage ./default.nix {
           src = self;
         };
-        defaultPackage = self'.packages.bme680-mqtt;
+        packages.default = self'.packages.bme680-mqtt;
       };
       flake.nixosModules.bme680-mqtt = { pkgs, ... }: {
         imports = [./module.nix];
-        services.bme680-mqtt.package = self.packages.${pkgs.hostPlatform.system}.bme680-mqtt;
+        services.bme680-mqtt.package = self.packages.${pkgs.hostPlatform.system}.default;
       };
     });
 }
