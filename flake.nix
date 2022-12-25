@@ -7,12 +7,16 @@
 
   outputs = inputs @ { flake-parts, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } ({self, ...}: {
-      perSystem = { pkgs, ... }: {
+      systems = [
+        "x86_64-linux"
+        "aarch64-linux"
+      ];
+      perSystem = { self', pkgs, ... }: {
         packages.bme680-mqtt = pkgs.python3.pkgs.callPackage ./default.nix {
           src = self;
         };
-        defaultPackage = self.packages.bme680-mqtt;
+        defaultPackage = self'.packages.bme680-mqtt;
       };
-      flake.nixosModules.bme680-mqtt = import ./module.nix;
+      flake.nixosModules.bme680-mqtt = ./module.nix;
     });
 }
