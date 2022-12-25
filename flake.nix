@@ -17,6 +17,9 @@
         };
         defaultPackage = self'.packages.bme680-mqtt;
       };
-      flake.nixosModules.bme680-mqtt = ./module.nix;
+      flake.nixosModules.bme680-mqtt = { pkgs, ... }: {
+        imports = [./module.nix];
+        services.bme680-mqtt.package = self.packages.${pkgs.hostPlatform.system}.bme680-mqtt;
+      };
     });
 }

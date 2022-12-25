@@ -9,6 +9,10 @@
     options = {
       services.bme680-mqtt = {
         enable = lib.mkEnableOption "bme680-mqtt";
+        package = lib.mkOption {
+          type = lib.types.path;
+          description = lib.mdDoc "package to use in this module";
+        };
         i2c.bus = lib.mkOption {
           type = lib.types.int;
           default = 1;
@@ -69,7 +73,7 @@
             PermissionsStartOnly = "true";
             Restart = "on-failure";
             ExecStart = ''
-              ${self.defaultPackage.${pkgs.system}}/bin/bme680-mqtt --quiet \
+              ${cfg.package}/bin/bme680-mqtt --quiet \
                 --name "${cfg.mqtt.name}" \
                 --topic-prefix "${cfg.mqtt.topicPrefix}" \
                 --i2c-address "${toString cfg.i2c.address}" \
