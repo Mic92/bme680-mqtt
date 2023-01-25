@@ -12,7 +12,7 @@ from urllib.parse import urlparse
 
 import bme680  # pylint: disable=import-error
 import paho.mqtt.client as mqtt
-from smbus import SMBus  # pylint: disable=import-error
+import smbus  # pylint: disable=import-error
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -183,7 +183,7 @@ def _setup_bme680(options: Options) -> Optional[BME680Handler]:
     sensor = None
     try:
         # pylint: disable=no-member
-        bus = SMBus(options.i2c_bus)
+        bus = smbus.SMBus(options.i2c_bus)
         sensor = bme680.BME680(options.i2c_address, bus)
 
         # Configure Oversampling
