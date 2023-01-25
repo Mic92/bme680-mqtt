@@ -20,11 +20,11 @@ module = "pytest.*"
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
-module = "smbus._smbus_cffi.*"
+module = "smbus"
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
-module = "mypy-paho.*"
+module = "paho.*"
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
