@@ -1,17 +1,17 @@
 """Support for BME680 Sensor over SMBus."""
+import argparse
+import json
 import logging
 import threading
 import time
-import json
 import uuid
-import argparse
+from dataclasses import dataclass
 from time import monotonic, sleep
 from typing import List, Optional
-import paho.mqtt.client as mqtt
 from urllib.parse import urlparse
-from dataclasses import dataclass
 
 import bme680  # pylint: disable=import-error
+import paho.mqtt.client as mqtt
 from smbus import SMBus  # pylint: disable=import-error
 
 _LOGGER = logging.getLogger(__name__)
